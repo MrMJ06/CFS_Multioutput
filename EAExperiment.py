@@ -18,18 +18,19 @@ class EAExperiment(object):
     # particles, pso_option_bounds, iters, max_hidden_layers, n_inputs, n_outputs
     def __init__(self, evaluation_function):
 
-        self.evaluation_function = self.evaluation_function
+        self.evaluation_function = evaluation_function
 
     def objective_function(self, x):
 
         fitness = []
         with Pool(12) as p:
-            fitness, features = p.map(self.evaluation_function, np.array_split(x, 12))
+            fitness = p.map(self.evaluation_function, np.array_split(x, 12))
             
-        return fitness, features
+        fitness = [item for sublist in fitness for item in sublist]
+        return fitness
     
     def start_search_ga(self, ngen, pop_size,  window_size, data):
         gam = GAModule()
         
-        return gam.start_search(ngen, pop_size, self.data, self.objective_function, window_size)
+        return gam.start_search(ngen, pop_size, data, self.objective_function, window_size)
         
